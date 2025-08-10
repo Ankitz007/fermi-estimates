@@ -1,12 +1,13 @@
 const appData = {
     framework: [
         { title: "1. Clarify Scope & State Assumptions", content: "Define boundaries and ask clarifying questions. Are we estimating average or peak traffic? Storage for raw data or replicas too? Explicitly state all assumptions (e.g., 'Assuming 10M DAU, 20% active at peak'). This allows the interviewer to follow your logic and offer corrections." },
-        { title: "2. Decompose the Problem", content: "Break the large problem into a product of smaller, estimable components. Write out the formula first. For example: <br><code>Daily Storage = (DAU) * (% Users who Post) * (Avg Photos/Post) * (Avg Size/Photo)</code><br>This transforms one large guess into several smaller, more defensible ones." },
+        { title: "2. Decompose the Problem", content: "Break the large problem into a product of smaller, estimable components. Write out the formula first. For example:<br><div class='estimation-code mt-3'><code>Daily_Storage = DAU × Users_Who_Post × Avg_Photos_Per_Post × Avg_Size_Per_Photo</code></div>This transforms one large guess into several smaller, more defensible ones." },
         { title: "3. Assume and Anchor with Known Values", content: "Assign a reasonable, rounded value to each component. Use powers of ten and simple numbers (e.g., 100k seconds/day instead of 86,400). Anchor assumptions to known facts (e.g., population of a country, capacity of a server) to ground the estimation in reality." },
-        { title: "4. Calculate with Simplicity", content: "Perform the arithmetic using your rounded numbers and powers of ten. For example, <br><code>(5 * 10<sup>5</sup>) * (2 * 10<sup>5</sup> bytes) = 100 GB</code><br>The goal is transparency, not complex math. A key shortcut: 1 million requests/day ≈ 12 requests/second." },
+        { title: "4. Calculate with Simplicity", content: "Perform the arithmetic using your rounded numbers and powers of ten. For example:<br><div class='estimation-code mt-3'><code>(5 × 10⁵) × (2 × 10⁵ bytes) = 100 GB</code></div>The goal is transparency, not complex math. A key shortcut: 1 million requests/day ≈ 12 requests/second." },
         { title: "5. Sanity-Check the Result", content: "Step back and evaluate if the final number is plausible. If your new app requires more storage than Google, a mistake was likely made. Compare the result to known benchmarks if possible (e.g., 'This QPS is 1% of Twitter's scale, which seems reasonable'). This demonstrates critical thinking." }
     ],
     referenceTables: [
+        { title: "Latency Numbers Every Engineer Must Know", description: "The vast differences in latency justify major architectural decisions like caching. A key goal is to shift work from high-latency (disk) to low-latency (memory) operations. Understanding these orders of magnitude helps in making informed system design choices.", headers: ["Operation", "Typical Latency", "Architectural Impact"], rows: [["L1 Cache Reference", "0.5 ns", "Fastest possible memory access"], ["Branch Mispredict", "5 ns", "CPU pipeline optimization"], ["L2 Cache Reference", "7 ns", "Still very fast, on-chip"], ["Mutex Lock/Unlock", "25 ns", "Synchronization overhead"], ["Main Memory Reference", "100 ns", "RAM access - optimization target"], ["Compress 1KB with Zippy", "10 μs", "CPU-intensive operation"], ["Send 1KB over 1 Gbps Network", "10 μs", "Network I/O becomes significant"], ["Read 4KB Randomly from SSD", "150 μs", "SSD random access"], ["Read 1MB Sequentially from Memory", "250 μs", "Memory bandwidth limit"], ["Round Trip within Same Datacenter", "0.5 ms", "Network latency within DC"], ["Read 1MB Sequentially from SSD", "1 ms", "SSD sequential read"], ["Disk Seek", "10 ms", "Traditional HDD seek time"], ["Read 1MB Sequentially from Disk", "30 ms", "HDD sequential read"], ["Send Packet CA→Netherlands→CA", "150 ms", "Global network latency"]] },
         { title: "Data Volume (Powers of Two)", description: "Understanding the orders of magnitude is crucial. The difference between a Gigabyte and a Terabyte is the difference between data that fits on one server and data that requires a distributed system. These units form the language of scale.", headers: ["Power", "Name", "Abbreviation", "Approximate Size"], rows: [["2<sup>10</sup>", "Kilobyte", "KB", "1 thousand bytes"], ["2<sup>20</sup>", "Megabyte", "MB", "1 million bytes"], ["2<sup>30</sup>", "Gigabyte", "GB", "1 billion bytes"], ["2<sup>40</sup>", "Terabyte", "TB", "1 trillion bytes"], ["2<sup>50</sup>", "Petabyte", "PB", "1 quadrillion bytes"]] },
         { title: "Common Data Object Sizes", description: "Having a feel for the size of common data types helps anchor storage and bandwidth calculations in reality. Estimating storage for a text post vs. a high-resolution video leads to vastly different architectural choices.", headers: ["Data Object / Metric", "Average Size / Rate"], rows: [["User ID", "8 bytes"], ["Text Post", "500 bytes"], ["User Profile", "1-5 KB"], ["Thumbnail Image", "50-100 KB"], ["High-Res Photo", "2-5 MB"], ["1 min HD Video", "~30-50 MB"], ["1 Gbps Throughput", "~125 MB/s"]] },
         { title: "Time & Request Rate Conversions", description: "These shortcuts are essential for quickly translating high-level user activity (e.g., '100 million daily views') into the per-second metrics (QPS) that systems are actually measured and provisioned against.", headers: ["Daily Requests", "Approximate QPS"], rows: [["1 million/day", "~12 QPS"], ["10 million/day", "~120 QPS"], ["100 million/day", "~1,200 QPS"], ["1 billion/day", "~12,000 QPS"]] }
@@ -53,28 +54,77 @@ document.addEventListener('DOMContentLoaded', () => {
     const synthesisContainer = document.getElementById('synthesis-container');
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
+    const scrollToTopBtn = document.getElementById('scroll-to-top');
 
     let currentChart = null;
     let currentQpsChart = null;
+
+    // Helper function to format QPS numbers
+    function formatQPS(qps) {
+        if (qps >= 1000000) {
+            return (qps / 1000000).toFixed(1) + 'M';
+        } else if (qps >= 1000) {
+            return (qps / 1000).toFixed(1) + 'K';
+        }
+        return qps.toString();
+    }
+
+    // Scroll to top functionality
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Show/hide scroll to top button
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+            scrollToTopBtn.classList.add('visible');
+        } else {
+            scrollToTopBtn.classList.remove('visible');
+        }
+    });
+
+    // Enhanced smooth scrolling for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                // Close mobile menu if open
+                mobileMenu.classList.add('hidden');
+            }
+        });
+    });
 
     // Mobile menu toggle
     mobileMenuButton.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
     });
 
-    // Accordion for Framework
+    // Enhanced Accordion for Framework
     appData.framework.forEach((item, index) => {
         const div = document.createElement('div');
-        div.className = 'border border-gray-200 rounded-lg mb-2 bg-white';
+        div.className = 'framework-step bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-xl mb-4 overflow-hidden hover:shadow-md transition-all duration-300';
         div.innerHTML = `
-                    <button class="accordion-button w-full text-left p-4 font-semibold flex justify-between items-center transition-colors duration-300 hover:bg-gray-50">
-                        <span>${item.title}</span>
-                        <svg class="w-5 h-5 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="accordion-content px-4">
-                        <p class="py-4 text-gray-600">${item.content}</p>
-                    </div>
-                `;
+            <button class="accordion-button w-full text-left p-6 font-semibold flex items-center transition-all duration-300 hover:bg-slate-100/50">
+                <div class="step-number bg-gradient-to-r from-indigo-500 to-purple-600 text-white w-10 h-10 rounded-xl flex items-center justify-center font-bold mr-4 flex-shrink-0 shadow-lg">${index + 1}</div>
+                <span class="flex-1 text-gray-800 text-lg">${item.title.replace(/^\d+\.\s*/, '')}</span>
+                <div class="ml-4 w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-chevron-down transform transition-transform duration-300 text-slate-600 text-sm"></i>
+                </div>
+            </button>
+            <div class="accordion-content bg-white">
+                <div class="p-6 text-gray-700 leading-relaxed border-t border-slate-100">
+                    ${item.content}
+                </div>
+            </div>
+        `;
         frameworkAccordion.appendChild(div);
     });
 
@@ -82,103 +132,77 @@ document.addEventListener('DOMContentLoaded', () => {
         const button = e.target.closest('.accordion-button');
         if (button) {
             const content = button.nextElementSibling;
-            const icon = button.querySelector('svg');
-            const isOpen = content.style.maxHeight;
+            const icon = button.querySelector('i');
+            const stepContainer = button.parentElement;
+            const isCurrentlyOpen = content.classList.contains('open');
 
-            // Close all accordions
-            frameworkAccordion.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
-            frameworkAccordion.querySelectorAll('.accordion-button svg').forEach(i => i.classList.remove('rotate-180'));
+            // Close all accordions and remove active states
+            frameworkAccordion.querySelectorAll('.accordion-content').forEach(c => {
+                c.style.maxHeight = null;
+                c.classList.remove('open');
+            });
+            frameworkAccordion.querySelectorAll('.accordion-button i').forEach(i => i.classList.remove('rotate-180'));
+            frameworkAccordion.querySelectorAll('.framework-step').forEach(s => s.classList.remove('active'));
 
-            if (!isOpen || isOpen === "0px") {
+            // If this accordion wasn't open, open it
+            if (!isCurrentlyOpen) {
+                // Force a reflow before calculating height
+                content.style.display = 'block';
+                content.offsetHeight; // Trigger reflow
+
                 content.style.maxHeight = content.scrollHeight + "px";
+                content.classList.add('open');
                 icon.classList.add('rotate-180');
-            }
-        }
-    });
+                stepContainer.classList.add('active', 'shadow-lg', 'border-indigo-200');
 
-    // Latency Chart
-    const latencyData = {
-        labels: ['L1 Cache', 'L2 Cache', 'RAM', '1KB Network', '1MB RAM Seq', 'DC Roundtrip', '1MB SSD Seq', 'Disk Seek', '1MB Disk Seq', 'Cross-Continent'],
-        values: [0.5, 7, 100, 10000, 250000, 500000, 1000000, 10000000, 20000000, 150000000] // all in nanoseconds
-    };
-    const ctx = document.getElementById('latencyChart').getContext('2d');
-    currentChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: latencyData.labels.map(label => label.match(/.{1,16}/g).join('\n')),
-            datasets: [{
-                label: 'Latency (nanoseconds)',
-                data: latencyData.values,
-                backgroundColor: 'rgba(52, 152, 219, 0.6)',
-                borderColor: 'rgba(52, 152, 219, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'x',
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    type: 'logarithmic',
-                    title: { display: true, text: 'Latency (ns)' },
-                    ticks: {
-                        callback: function (value, index, values) {
-                            if (value === 1000000000) return '1s';
-                            if (value === 1000000) return '1ms';
-                            if (value === 1000) return '1µs';
-                            if (value === 1) return '1ns';
-                            return null;
-                        }
+                // Recalculate height after any animations complete
+                setTimeout(() => {
+                    if (content.classList.contains('open')) {
+                        content.style.maxHeight = content.scrollHeight + "px";
                     }
-                },
-                x: {
-                    ticks: {
-                        autoSkip: false,
-                        maxRotation: 90,
-                        minRotation: 45
+                }, 100);
+
+                // Additional recalculation for mobile devices
+                setTimeout(() => {
+                    if (content.classList.contains('open')) {
+                        content.style.maxHeight = content.scrollHeight + "px";
                     }
-                }
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            let value = context.raw;
-                            let label = '';
-                            if (value >= 1000000000) label = (value / 1000000000).toFixed(2) + ' s';
-                            else if (value >= 1000000) label = (value / 1000000).toFixed(2) + ' ms';
-                            else if (value >= 1000) label = (value / 1000).toFixed(2) + ' µs';
-                            else label = value + ' ns';
-                            return `Latency: ${label}`;
-                        }
-                    }
-                }
+                }, 300);
             }
         }
     });
 
     // Reference Tables
-    appData.referenceTables.forEach(table => {
+    appData.referenceTables.forEach((table, index) => {
         const tableHtml = `
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h4 class="font-semibold text-lg mb-2">${table.title}</h4>
-                        <p class="text-sm text-gray-500 mb-4">${table.description}</p>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full text-sm">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        ${table.headers.map(h => `<th class="p-2 text-left font-semibold text-gray-600">${h}</th>`).join('')}
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    ${table.rows.map(r => `<tr>${r.map(d => `<td class="p-2 text-gray-700">${d}</td>`).join('')}</tr>`).join('')}
-                                </tbody>
-                            </table>
-                        </div>
+            <div class="table-container bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-6 border border-slate-200">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fas fa-chart-line text-white text-lg"></i>
                     </div>
-                `;
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-800 mb-1">${table.title}</h4>
+                        <p class="p-3 text-sm text-gray-600">${table.description}</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto rounded-lg shadow-sm">
+                    <table class="rounded-lg reference-table w-full">
+                        <thead>
+                            <tr>
+                                ${table.headers.map(h => `<th class="bg-gradient-to-r from-gray-800 to-gray-900 text-white font-semibold px-6 py-4 text-left">${h}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${table.rows.map((r, idx) => `
+                                <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-indigo-50 transition-colors duration-200">
+                                    ${r.map((d, cellIdx) => `<td class="px-6 py-4 text-sm text-gray-700 ${cellIdx === 0 ? 'font-semibold text-gray-900' : ''}">${d}</td>`).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
         referenceTablesContainer.insertAdjacentHTML('beforeend', tableHtml);
     });
 
@@ -208,13 +232,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         filteredProblems.forEach(problem => {
             const card = document.createElement('div');
-            card.className = 'card bg-white p-6 rounded-lg shadow-md cursor-pointer';
+            const domainClass = `domain-${problem.domain.toLowerCase()}`;
+            card.className = 'problem-card bg-white p-6 rounded-xl shadow-lg cursor-pointer hover:scale-105 transition-all duration-300';
             card.dataset.id = problem.id;
             card.innerHTML = `
-                        <h4 class="font-bold text-xl mb-2">${problem.title}</h4>
-                        <p class="text-gray-500 text-sm mb-3">${problem.domain}</p>
-                        <div class="flex flex-wrap gap-2">
-                            ${problem.tags.map(tag => `<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">${tag}</span>`).join('')}
+                        <div class="flex justify-between items-start mb-3">
+                            <h4 class="font-bold text-xl text-gray-800 flex-1 pr-2">${problem.title}</h4>
+                            <div class="${domainClass} text-white text-xs font-bold px-3 py-1 rounded-full flex-shrink-0">
+                                ${problem.domain}
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            ${problem.tags.map(tag => `<span class="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200">${tag}</span>`).join('')}
+                        </div>
+                        <div class="text-xs text-gray-500 flex justify-between items-center">
+                            <span>📊 ${problem.estimations.length} Key Estimations</span>
+                            <span class="flex items-center">
+                                <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                                R: ${formatQPS(problem.qps.read)} QPS
+                                <span class="w-2 h-2 bg-red-400 rounded-full ml-2 mr-1"></span>
+                                W: ${formatQPS(problem.qps.write)} QPS
+                            </span>
                         </div>
                     `;
             problemsGrid.appendChild(card);
@@ -222,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     problemsGrid.addEventListener('click', (e) => {
-        const card = e.target.closest('.card');
+        const card = e.target.closest('.problem-card');
         if (card) {
             showProblemDetails(card.dataset.id);
         }
@@ -240,6 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTabs.querySelector('[data-tab="estimations"]').classList.remove('active');
 
         modal.classList.remove('hidden');
+        // Prevent body scrolling
+        document.body.style.overflow = 'hidden';
         setTimeout(() => modalBox.classList.add('active'), 10);
     }
 
@@ -260,34 +300,60 @@ document.addEventListener('DOMContentLoaded', () => {
         let content = '';
         if (tab === 'requirements') {
             content = `
-                        <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
-                            <div>
-                                <h5 class="font-semibold text-lg mb-3 border-b pb-2">Functional Requirements</h5>
-                                <ul class="space-y-3 text-gray-700">
-                                    ${problem.functional.map(r => `<li>${r}</li>`).join('')}
-                                </ul>
+                        <div class="grid md:grid-cols-2 gap-6 sm:gap-8">
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mr-3">
+                                        <i class="fas fa-check-circle text-white"></i>
+                                    </div>
+                                    <h5 class="font-bold text-lg text-blue-800 border-b-2 border-blue-300 pb-1">Functional Requirements</h5>
+                                </div>
+                                <div class="space-y-3">
+                                    ${problem.functional.map(r => `
+                                        <div class="bg-white/70 p-3 rounded-lg border border-blue-100 hover:bg-white/90 transition-colors">
+                                            <div class="text-sm text-gray-700 leading-relaxed">${r}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
                             </div>
-                            <div>
-                                <h5 class="font-semibold text-lg mb-3 border-b pb-2">Non-Functional Requirements</h5>
-                                <ul class="space-y-3 text-gray-700">
-                                    ${problem.nonFunctional.map(r => `<li>${r}</li>`).join('')}
-                                </ul>
+                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
+                                <div class="flex items-center mb-4">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-bolt text-white"></i>
+                                    </div>
+                                    <h5 class="font-bold text-lg text-purple-800 border-b-2 border-purple-300 pb-1">Non-Functional Requirements</h5>
+                                </div>
+                                <div class="space-y-3">
+                                    ${problem.nonFunctional.map(r => `
+                                        <div class="bg-white/70 p-3 rounded-lg border border-purple-100 hover:bg-white/90 transition-colors">
+                                            <div class="text-sm text-gray-700 leading-relaxed">${r}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
                             </div>
                         </div>
                     `;
         } else if (tab === 'estimations') {
             content = `
-                        <div class="space-y-4">
+                        <div class="space-y-6">
                             ${problem.estimations.map(est => `
-                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                    <h6 class="font-semibold text-gray-800">${est.title}</h6>
-                                    <p class="text-sm text-gray-800 font-mono bg-gray-200 px-2 py-1 rounded my-2 inline-block">${est.calc}</p>
-                                    <p class="text-sm text-blue-800"><strong class="font-semibold text-blue-900">Architectural Implication:</strong> ${est.implication}</p>
+                                <div class="bg-gradient-to-br from-white to-gray-50 p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                                    <h6 class="font-bold text-lg text-gray-800 mb-3 flex items-center">
+                                        <span class="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
+                                        ${est.title}
+                                    </h6>
+                                    <div class="estimation-code mb-4">
+                                        <code class="block whitespace-nowrap overflow-x-auto">${est.calc.replace(/\*/g, '×').replace(/<sup>/g, '').replace(/<\/sup>/g, '').replace(/≈/g, '<span class="highlight">≈</span>').replace(/×/g, '<span class="operator">×</span>')}</code>
+                                    </div>
+                                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+                                        <p class="text-sm text-blue-900"><strong class="font-semibold">Architectural Implication:</strong> ${est.implication}</p>
+                                    </div>
                                 </div>
                             `).join('')}
                         </div>
-                        <div class="mt-8">
-                            <h5 class="font-semibold text-lg mb-2 text-center">Peak Read vs. Write QPS</h5>
+                        <div class="mt-10 bg-gray-50 p-6 rounded-xl">
+                            <h5 class="font-bold text-xl mb-4 text-center text-gray-800">System Load Profile</h5>
+                            <p class="text-center text-gray-600 mb-6 text-sm">Understanding the read/write ratio is crucial for architectural decisions</p>
                             <div class="chart-container relative h-64 w-full max-w-md mx-auto">
                                 <canvas id="qpsChart"></canvas>
                             </div>
@@ -330,35 +396,98 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeModalBtn.addEventListener('click', () => {
         modalBox.classList.remove('active');
+        // Restore body scrolling
+        document.body.style.overflow = 'auto';
         setTimeout(() => modal.classList.add('hidden'), 300);
     });
 
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modalBox.classList.remove('active');
+            // Restore body scrolling
+            document.body.style.overflow = 'auto';
             setTimeout(() => modal.classList.add('hidden'), 300);
         }
     });
 
-    // Synthesis Section
-    appData.synthesis.forEach(item => {
+    // Synthesis Section - Enhanced with visual patterns
+    const patternIcons = {
+        'Aggressive, Multi-Layer Caching': 'fas fa-layer-group',
+        'Streaming Ingestion Pipeline': 'fas fa-stream',
+        'Object Storage + Sharded Database': 'fas fa-database',
+        'In-Memory Computation & Edge Deployment': 'fas fa-microchip',
+        'Dedicated Connection Gateway Layer': 'fas fa-network-wired',
+        'Microservices & Orchestration': 'fas fa-cubes',
+        'In-Memory Geospatial Indexing': 'fas fa-map-marked-alt'
+    };
+
+    const patternColors = {
+        'Aggressive, Multi-Layer Caching': 'from-blue-500 to-blue-600',
+        'Streaming Ingestion Pipeline': 'from-purple-500 to-pink-500',
+        'Object Storage + Sharded Database': 'from-green-500 to-teal-500',
+        'In-Memory Computation & Edge Deployment': 'from-yellow-500 to-orange-500',
+        'Dedicated Connection Gateway Layer': 'from-indigo-500 to-purple-500',
+        'Microservices & Orchestration': 'from-pink-500 to-rose-500',
+        'In-Memory Geospatial Indexing': 'from-emerald-500 to-green-500'
+    };
+
+    appData.synthesis.forEach((item, index) => {
+        const patternIcon = patternIcons[item.pattern] || 'fas fa-cog';
+        const patternColor = patternColors[item.pattern] || 'from-gray-500 to-gray-600';
+
         const div = document.createElement('div');
-        div.className = 'bg-white rounded-lg shadow-md mb-4 p-6';
+        div.className = 'synthesis-card bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-100 hover:border-gray-200 transition-all duration-300';
         div.innerHTML = `
-                    <h4 class="font-bold text-xl text-blue-600 mb-2">${item.outcome}</h4>
-                    <div class="md:flex items-center justify-between">
-                        <div class="mb-3 md:mb-0">
-                            <p class="font-semibold text-lg text-gray-800">${item.pattern}</p>
-                            <p class="text-gray-600">${item.description}</p>
-                        </div>
-                        <div class="flex flex-wrap gap-2 justify-start md:justify-end">
-                            ${item.examples.map(ex => `<span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full">${ex}</span>`).join('')}
+            <div class="bg-gradient-to-br ${patternColor} rounded-xl p-8 text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+                <div class="relative z-10">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="flex items-center">
+                            <div class="w-16 h-16 bg-white/25 backdrop-blur-sm rounded-2xl flex items-center justify-center mr-6 flex-shrink-0 shadow-lg">
+                                <i class="${patternIcon} text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-2xl mb-2 leading-tight">${item.outcome}</h4>
+                                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+                                    <i class="fas fa-cogs mr-2 text-sm"></i>
+                                    <span class="font-semibold text-sm">${item.pattern}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                `;
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <p class="text-gray-700 mb-6 leading-relaxed text-base">${item.description}</p>
+                
+                <div class="bg-gradient-to-r from-emerald-50 to-blue-50 p-5 rounded-xl border border-emerald-200">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-lightbulb text-emerald-600 mr-2"></i>
+                        <h6 class="font-bold text-sm text-emerald-800">Real-world Examples</h6>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${item.examples.map(ex => `
+                            <span class="bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-sm font-medium px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-shadow">
+                                ${ex}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
         synthesisContainer.appendChild(div);
     });
 
     // Initial render
     renderProblems();
+
+    // Handle window resize for accordion height recalculation
+    window.addEventListener('resize', () => {
+        // Recalculate open accordion heights on window resize
+        frameworkAccordion.querySelectorAll('.accordion-content.open').forEach(content => {
+            content.style.maxHeight = content.scrollHeight + "px";
+        });
+    });
 });
