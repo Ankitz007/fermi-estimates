@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
@@ -7,108 +13,14 @@
     <title>Interactive Guide to System Design Estimation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="./app.js"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FDFBF7;
-            color: #2c3e50;
-        }
-
-        .nav-link {
-            transition: color 0.3s ease, border-color 0.3s ease;
-            border-bottom: 2px solid transparent;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: #3498db;
-            border-bottom-color: #3498db;
-        }
-
-        .card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .modal-bg {
-            background-color: rgba(0, 0, 0, 0.5);
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-box {
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            transform: translateY(20px) scale(0.95);
-            opacity: 0;
-        }
-
-        .modal-box.active {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-
-        .tab-button.active {
-            background-color: #3498db;
-            color: white;
-        }
-
-        .filter-button.active {
-            background-color: #2c3e50;
-            color: white;
-            border-color: #2c3e50;
-        }
-
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-        }
-
-        /* Mobile-specific improvements */
-        @media (max-width: 640px) {
-            .card:hover {
-                transform: none;
-            }
-            
-            .chart-container canvas {
-                max-width: 100%;
-                height: auto !important;
-            }
-            
-            /* Ensure text doesn't overflow */
-            h1, h2, h3, h4 {
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-            
-            /* Better touch targets */
-            .tab-button {
-                min-height: 44px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .filter-button {
-                min-height: 44px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-
-        /* Improve scrolling on iOS */
-        .modal-box {
-            -webkit-overflow-scrolling: touch;
-        }
-    </style>
 </head>
 
 <body class="antialiased">
@@ -117,18 +29,15 @@
     <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 w-full border-b border-gray-200">
         <div class="container mx-auto px-3 sm:px-4">
             <div class="flex items-center justify-between h-14 sm:h-16">
-                <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 truncate">System Design Estimation</h1>
+                <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 truncate">System Design Estimation
+                </h1>
                 <nav class="hidden md:flex items-center space-x-6 text-gray-600">
                     <a href="#concepts" class="nav-link pb-1">Core Concepts</a>
                     <a href="#explorer" class="nav-link pb-1">Problem Explorer</a>
                     <a href="#synthesis" class="nav-link pb-1">Synthesis</a>
                 </nav>
                 <button id="mobile-menu-button" class="md:hidden p-2 rounded-md flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16m-7 6h7" />
-                    </svg>
+                    <i class="fas fa-bars text-gray-700 text-lg sm:text-xl"></i>
                 </button>
             </div>
         </div>
@@ -156,41 +65,74 @@
         <!-- Core Concepts -->
         <section id="concepts" class="mb-12 sm:mb-16">
             <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12 px-2">Core Concepts</h2>
-            <div class="grid md:grid-cols-2 gap-6 sm:gap-8 items-start">
-                <!-- 5-Step Framework -->
-                <div id="framework-accordion">
-                    <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-center md:text-left px-2">The 5-Step Estimation Framework
-                    </h3>
-                    <!-- Accordion Items will be injected here by JS -->
-                </div>
 
-                <!-- Reference Tables & Chart -->
-                <div>
-                    <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-center md:text-left px-2">Key Reference Data</h3>
-                    <p class="text-gray-600 mb-6 text-center md:text-left text-sm sm:text-base px-2">Having these figures at your fingertips is an
-                        engineering superpower. They allow you to quickly validate assumptions and make informed
-                        decisions about technology choices without breaking your problem-solving flow.</p>
-                    <div id="reference-tables-container" class="space-y-4">
-                        <div class="bg-white p-4 sm:p-6 rounded-lg shadow-md">
-                            <h4 class="font-semibold text-base sm:text-lg mb-2">Latency Numbers Every Engineer Must Know</h4>
-                            <p class="text-xs sm:text-sm text-gray-500 mb-4">The vast differences in latency justify major
-                                architectural decisions like caching. A key goal is to shift work from high-latency
-                                (disk) to low-latency (memory) operations. This chart uses a logarithmic scale to
-                                visualize these massive gaps.</p>
-                            <div class="chart-container relative h-64 sm:h-80 md:h-96 w-full max-w-2xl mx-auto overflow-hidden">
-                                <canvas id="latencyChart"></canvas>
+            <!-- Framework Section -->
+            <div class="mb-12">
+                <div class="mx-auto">
+                    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                        <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 p-6 text-white">
+                            <div class="flex items-center">
+                                <div
+                                    class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="fas fa-list-ol text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-bold mb-1">The 5-Step Estimation Framework</h3>
+                                    <p class="text-indigo-100 font-medium">A systematic approach to tackle any
+                                        estimation problem</p>
+                                </div>
                             </div>
                         </div>
-                        <!-- Other tables will be injected here -->
+                        <div class="p-2">
+                            <div id="framework-accordion" class="space-y-4">
+                                <!-- Accordion Items will be injected here by JS -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Reference Tables Section -->
+            <div class="mx-auto">
+                <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                    <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-3 text-white">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div
+                                    class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="fas fa-database text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-bold mb-1">Essential Reference Data</h3>
+                                    <p class="text-emerald-100 font-medium">Critical numbers every engineer should
+                                        memorize</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-gray-600 mb-8 text-base leading-relaxed max-w-3xl">
+                            Having these figures at your fingertips is an engineering superpower. They allow you to
+                            quickly
+                            validate assumptions and make informed decisions about technology choices without breaking
+                            your problem-solving flow.
+                        </p>
+                        <div id="reference-tables-container" class="space-y-8">
+                            <!-- Tables will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </div>
+        </div>
         </section>
 
         <!-- Problem Explorer -->
         <section id="explorer" class="mb-12 sm:mb-16">
             <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4 px-2">Problem Explorer</h2>
-            <p class="text-center text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base px-2">Select a domain to explore real-world system design challenges and
+            <p class="text-center text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base px-2">Select a domain to explore
+                real-world system design challenges and
                 their quantitative estimations.</p>
 
             <div id="filters" class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 sm:mb-8 px-2">
@@ -203,15 +145,22 @@
         </section>
 
         <!-- Synthesis -->
-        <section id="synthesis" class="mb-12 sm:mb-16">
-            <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4 px-2">From Estimation to Architecture</h2>
-            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8 sm:mb-12 text-sm sm:text-base px-2">
-                Fermi estimation is the bridge from requirements to concrete architectural patterns. The numbers you
-                calculate directly justify your choice of technology and design. This section synthesizes the key
-                takeaways, mapping common estimation outcomes to the architectural patterns they demand.
-            </p>
-            <div id="synthesis-container" class="max-w-4xl mx-auto px-2">
-                <!-- Synthesis content will be injected here -->
+        <section id="synthesis" class="mb-12 sm:mb-16 synthesis-grid py-8 sm:py-12 -mx-3 sm:-mx-4 px-3 sm:px-4">
+            <div class="mx-auto">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4 px-2">From Estimation to Architecture</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8 sm:mb-12 text-sm sm:text-base px-2">
+                    Fermi estimation is the bridge from requirements to concrete architectural patterns. The numbers you
+                    calculate directly justify your choice of technology and design. This interactive guide maps common
+                    estimation outcomes to proven architectural patterns.
+                </p>
+
+                <div id="synthesis-container" class="space-y-6">
+                </div>
+            </div>
+
+            <div id="synthesis-container" class="space-y-6">
+                <!-- Enhanced synthesis content will be injected here -->
+            </div>
             </div>
         </section>
 
@@ -248,6 +197,12 @@
             </div>
         </div>
     </div>
+
+    <!-- Scroll to Top Button -->
+    <div id="scroll-to-top" class="scroll-to-top">
+        <i class="fas fa-arrow-up text-white text-lg"></i>
+    </div>
+
 </body>
 
 </html>
