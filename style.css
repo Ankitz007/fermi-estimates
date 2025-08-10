@@ -1,0 +1,847 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #FDFBF7;
+    color: #2c3e50;
+}
+
+.nav-link {
+    transition: color 0.3s ease, border-color 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+}
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.modal-bg {
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease;
+}
+
+.modal-box {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+}
+
+.modal-box.active {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.tab-button.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.filter-button.active {
+    background-color: #2c3e50;
+    color: white;
+    border-color: #2c3e50;
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+
+/* Enhanced Core Concepts styling */
+.framework-step {
+    transition: all 0.3s ease;
+}
+
+.framework-step:hover {
+    transform: translateY(-2px);
+}
+
+.framework-step.active {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+}
+
+.step-number {
+    transition: all 0.3s ease;
+}
+
+.framework-step:hover .step-number {
+    transform: scale(1.1);
+}
+
+/* Enhanced table styling */
+.reference-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.reference-table th:first-child {
+    border-top-left-radius: 0.5rem;
+}
+
+.reference-table th:last-child {
+    border-top-right-radius: 0.5rem;
+}
+
+.reference-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.5rem;
+}
+
+.reference-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.5rem;
+}
+
+/* Accordion styling and mobile fixes */
+.accordion-content {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
+}
+
+.accordion-content.open {
+    transition: max-height 0.3s ease-in;
+}
+
+/* Enhanced table styling without rounded corners */
+.reference-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.reference-table:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.reference-table thead {
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+}
+
+.reference-table th {
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 14px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #374151;
+    position: relative;
+}
+
+.reference-table th:not(:last-child) {
+    border-right: 1px solid #4b5563;
+}
+
+.reference-table tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.reference-table tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.reference-table tbody tr:hover {
+    background-color: #e0f2fe;
+    transform: translateX(2px);
+    box-shadow: 4px 0 8px rgba(14, 165, 233, 0.1);
+}
+
+.reference-table td {
+    padding: 14px 20px;
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+    border-right: 1px solid #f1f5f9;
+}
+
+.reference-table td:last-child {
+    border-right: none;
+}
+
+.reference-table td:first-child {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Enhanced mobile responsiveness and fixes */
+@media (max-width: 640px) {
+    .container {
+        padding: 0.75rem;
+    }
+
+    .card:hover {
+        transform: none;
+    }
+
+    .chart-container canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    /* Ensure text doesn't overflow */
+    h1,
+    h2,
+    h3,
+    h4 {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Better touch targets */
+    .tab-button {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .filter-button {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .pattern-icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 12px;
+    }
+
+    .step-number {
+        width: 28px;
+        height: 28px;
+        margin-right: 8px;
+        font-size: 14px;
+    }
+
+    .reference-table th,
+    .reference-table td {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .framework-step:hover {
+        box-shadow: none;
+    }
+
+    .reference-table:hover {
+        box-shadow: none;
+    }
+
+    /* Modal responsiveness fixes */
+    .modal-content {
+        max-height: 85vh;
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    .modal-content .grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    /* Better mobile spacing for requirement cards */
+    .bg-gradient-to-br {
+        padding: 1rem !important;
+    }
+
+    .bg-gradient-to-br h5 {
+        font-size: 1rem !important;
+    }
+
+    /* Enhanced synthesis cards mobile styling */
+    .synthesis-card {
+        margin-bottom: 1.5rem !important;
+    }
+
+    .synthesis-card .bg-gradient-to-br {
+        padding: 1.5rem !important;
+    }
+
+    .synthesis-card .absolute {
+        display: none;
+        /* Hide decorative elements on mobile */
+    }
+
+    .synthesis-card .w-16 {
+        width: 3.5rem !important;
+        height: 3.5rem !important;
+        margin-right: 1rem !important;
+    }
+
+    .synthesis-card h4 {
+        font-size: 1.5rem !important;
+        line-height: 1.2 !important;
+    }
+
+    .synthesis-card .inline-flex {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.875rem !important;
+    }
+
+    .synthesis-card p {
+        font-size: 0.9rem !important;
+        line-height: 1.5 !important;
+    }
+}
+
+/* Navigation improvements */
+.nav-desktop {
+    display: none;
+}
+
+.nav-mobile {
+    display: block;
+}
+
+/* Hero section mobile */
+.hero-title {
+    font-size: 2rem;
+    line-height: 1.1;
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+/* Section spacing */
+section {
+    margin-bottom: 2rem;
+}
+
+/* Pattern legend mobile improvements */
+.flex.items-center.p-3 {
+    padding: 0.75rem;
+}
+
+.flex.items-center.p-3 span {
+    font-size: 0.875rem;
+}
+
+/* Accordion improvements - ENHANCED FOR MOBILE */
+.accordion-button {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.accordion-content {
+    padding: 0;
+    font-size: 0.875rem;
+}
+
+/* Enhanced core concepts mobile layout */
+#concepts .max-w-4xl,
+#concepts .max-w-6xl {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 1rem !important;
+}
+
+/* Framework card mobile styling */
+.framework-step {
+    margin-bottom: 1rem;
+}
+
+.framework-step .accordion-button {
+    padding: 1rem;
+    font-size: 1rem;
+}
+
+.framework-step .step-number {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    margin-right: 1rem;
+    font-size: 0.875rem;
+}
+
+.framework-step button span {
+    font-size: 1rem;
+    line-height: 1.3;
+}
+
+.accordion-content {
+    padding: 0;
+    font-size: 0.9rem;
+}
+
+/* Reference tables container mobile */
+.table-container {
+    margin-bottom: 2rem;
+    padding: 0.25rem !important;
+}
+
+.table-container .flex.items-center {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+}
+
+.table-container .w-12 {
+    width: 3rem !important;
+    height: 3rem !important;
+}
+
+/* Mobile table improvements */
+.reference-table th,
+.reference-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+.reference-table th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+/* Core concept section headers mobile */
+.bg-gradient-to-r h3 {
+    font-size: 1.5rem !important;
+}
+
+.bg-gradient-to-r p {
+    font-size: 0.875rem !important;
+}
+
+.bg-gradient-to-r .w-16 {
+    width: 3.5rem !important;
+    height: 3.5rem !important;
+}
+
+.table-header h4 {
+    font-size: 16px;
+}
+
+/* Prevent horizontal scroll on tables */
+.table-container {
+    overflow-x: auto;
+}
+
+/* Ensure proper text wrapping in accordion content */
+.accordion-content .estimation-code {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.accordion-content .estimation-code code {
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.bg-gradient-to-br h5 {
+    font-size: 1rem !important;
+}
+
+/* Enhanced synthesis cards mobile styling */
+.synthesis-card {
+    margin-bottom: 1.5rem !important;
+    padding: 1rem !important;
+}
+
+.synthesis-card h4 {
+    font-size: 1.25rem !important;
+    line-height: 1.2 !important;
+}
+
+.synthesis-card h5 {
+    font-size: 1rem !important;
+}
+
+.synthesis-card p {
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+}
+
+/* Navigation improvements */
+.nav-desktop {
+    display: none;
+}
+
+.nav-mobile {
+    display: block;
+}
+
+/* Hero section mobile */
+.hero-title {
+    font-size: 2rem;
+    line-height: 1.1;
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+/* Section spacing */
+section {
+    margin-bottom: 2rem;
+}
+
+/* Pattern legend mobile improvements */
+.flex.items-center.p-3 {
+    padding: 0.75rem;
+}
+
+.flex.items-center.p-3 span {
+    font-size: 0.875rem;
+}
+
+/* Accordion improvements - ENHANCED FOR MOBILE */
+.accordion-button {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.accordion-content {
+    padding: 0;
+    font-size: 0.875rem;
+}
+
+/* Enhanced core concepts mobile layout */
+#concepts .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+}
+
+/* Framework card mobile styling */
+.framework-step {
+    margin-bottom: 0.75rem;
+}
+
+.framework-step .step-number {
+    flex-shrink: 0;
+}
+
+.framework-step button span {
+    font-size: 0.875rem;
+    line-height: 1.3;
+}
+
+/* Reference tables container mobile */
+#reference-tables-container .table-container:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+.table-container {
+    margin-bottom: 1.5rem;
+}
+
+/* Mobile table improvements */
+.reference-table th,
+.reference-table td {
+    padding: 10px 12px;
+    font-size: 12px;
+}
+
+.table-header {
+    padding: 12px 16px;
+}
+
+.table-header h4 {
+    font-size: 16px;
+}
+
+/* Prevent horizontal scroll on tables */
+.table-container {
+    overflow-x: auto;
+}
+
+/* Ensure proper text wrapping in accordion content */
+.accordion-content .estimation-code {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.accordion-content .estimation-code code {
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Extra small screens (below 480px) */
+@media (max-width: 480px) {
+    .container {
+        padding: 0.5rem;
+    }
+
+    .hero-title {
+        font-size: 1.75rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+
+    h2 {
+        font-size: 1.5rem !important;
+    }
+
+    .synthesis-card {
+        padding: 0.75rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .modal-content {
+        margin: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .flex.items-center.p-3 {
+        padding: 0.5rem;
+    }
+
+    .flex.items-center.p-3 span {
+        font-size: 0.75rem;
+    }
+}
+
+/* Enhanced code blocks - GitHub style */
+.estimation-code {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 8px 0;
+    position: relative;
+    overflow-x: auto;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+.estimation-code code {
+    color: #24292f;
+    font-size: 14px;
+    line-height: 1.5;
+    background: none;
+    padding: 0;
+}
+
+.estimation-code .highlight {
+    color: #0969da;
+    font-weight: 600;
+}
+
+.estimation-code .operator {
+    color: #cf222e;
+    font-weight: 500;
+}
+
+/* Synthesis cards with visual patterns */
+.synthesis-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.synthesis-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3498db, #2ecc71, #e74c3c, #f39c12);
+}
+
+.synthesis-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.pattern-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.pattern-caching {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.pattern-streaming {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.pattern-storage {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.pattern-memory {
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+}
+
+.pattern-connections {
+    background: linear-gradient(135deg, #fa709a, #fee140);
+}
+
+.pattern-microservices {
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+}
+
+.pattern-geospatial {
+    background: linear-gradient(135deg, #ff9a9e, #fecfef);
+}
+
+/* Animated background patterns - REMOVED */
+.synthesis-grid {
+    background: #f8fafc;
+    border-radius: 16px;
+}
+
+/* Interactive hover effects for problem cards */
+.problem-card {
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.problem-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #3498db, transparent);
+    transition: left 0.5s ease;
+}
+
+.problem-card:hover::before {
+    left: 100%;
+}
+
+.problem-card:hover {
+    border-color: #3498db;
+    box-shadow: 0 10px 25px rgba(52, 152, 219, 0.15);
+}
+
+/* Domain badges */
+.domain-consumer {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.domain-enterprise {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.domain-niche {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+/* Improve scrolling on iOS */
+.modal-box {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Fix modal overflow scrolling on mobile */
+.modal-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.modal-box .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Loading animations */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.loading {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Scroll to top button */
+.scroll-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 50;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-to-top:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+/* Enhanced hover effects */
+.interactive-element {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.interactive-element:hover {
+    transform: translateY(-2px);
+}
+
+/* Smooth section transitions */
+section {
+    scroll-margin-top: 80px;
+}
